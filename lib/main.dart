@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projet_carte_acces/Screens/login/login.dart';
 import 'package:projet_carte_acces/accueil/accueil.dart';
 
 void main() {
@@ -15,11 +16,11 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Login',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(0xFF2661FA),
+        primaryColor: const Color(0xFF2661FA),
         scaffoldBackgroundColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const Accueil(),
+      home: const LoginScreen(),
     );
   }
 }
