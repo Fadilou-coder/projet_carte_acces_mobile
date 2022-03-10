@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
+import 'package:projet_carte_acces/constants.dart';
 import 'package:projet_carte_acces/text_with_style.dart';
 
 import '../apprenant/apprenant.dart';
@@ -28,7 +27,7 @@ class AccueilState extends State<Accueil> {
             children: <Widget>[
               Positioned(
                   top: 0,
-                  child: Image.asset("images/Logo-Sonatel-Academy.png",
+                  child: Image.asset("assets/images/Logo-Sonatel-Academy.png",
                       width: size.width / 1.5),
                   height: size.height * 0.3),
               Positioned(
@@ -36,21 +35,21 @@ class AccueilState extends State<Accueil> {
                   width: size.width,
                   height: size.height * 0.1,
                   child: Card(
-                    color: const Color.fromRGBO(248, 248, 248, 100),
+                    color: kPrimaryLightColor,
                     child: TabBar(
-                      indicatorColor: const Color.fromRGBO(19, 138, 138, 100),
-                      labelColor: const Color.fromRGBO(19, 138, 138, 100),
+                      indicatorColor: kPrimaryColor,
+                      labelColor: kPrimaryColor,
                       tabs: [
                         Tab(
                           child: TextWithStyle(
                             data: "Apprenant",
-                            color: const Color.fromRGBO(19, 138, 138, 100),
+                            color: kPrimaryColor,
                           ),
                         ),
                         Tab(
                           child: TextWithStyle(
                             data: "Visiteur",
-                            color: const Color.fromRGBO(19, 138, 138, 100),
+                            color: kPrimaryColor,
                           ),
                         )
                       ],
@@ -62,7 +61,7 @@ class AccueilState extends State<Accueil> {
                 width: size.width,
                 height: size.height * 0.6,
                 child: Card(
-                    color: const Color.fromRGBO(19, 138, 138, 100),
+                    color: kPrimaryColor,
                     child: TabBarView(
                       children: [
                         MaterialApp(

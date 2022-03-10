@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:projet_carte_acces/constants.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 class Apprenant extends StatefulWidget {
@@ -21,17 +22,17 @@ class ApprenantState extends State<Apprenant> {
         width: size.width,
         height: size.height,
         child: Card(
-            color: const Color.fromRGBO(19, 138, 138, 100),
+            color: kPrimaryColor,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               CupertinoButton(
                   child: Image.asset(
-                    "images/entree.png",
+                    "assets/images/entree.png",
                     width: size.width / 2.5,
                   ),
                   onPressed: () => scanQRCode("entree")),
               CupertinoButton(
-                child:
-                    Image.asset("images/sortie.png", width: size.width / 2.5),
+                child: Image.asset("assets/images/sortie.png",
+                    width: size.width / 2.5),
                 onPressed: () => scanQRCode("sortie"),
               ),
             ])),
