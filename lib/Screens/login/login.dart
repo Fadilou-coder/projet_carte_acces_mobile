@@ -1,21 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import '../../component/rounded_button.dart';
-import '../../component/rounded_input.dart';
-import '../../component/rounded_password.dart';
+import '../../component/input_container.dart';
 import '../../constants.dart';
+import 'package:http/http.dart' as http;
+import '../../accueil/accueil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    double viewInset = MediaQuery.of(context).viewInsets.bottom;
     double defaultLoginSize = size.height - (size.height * 0.2);
+    double defaultRegisterSize = size.height - (size.height * 0.1);
 
     return Scaffold(
       body: Stack(
@@ -47,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Align(
             alignment: Alignment.center,
             child: SingleChildScrollView(
-              child: SizedBox(
+              child: Container(
                 width: size.width,
                 height: defaultLoginSize,
                 child: Column(
@@ -61,15 +70,61 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 26,
                           color: kPrimaryColor),
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30),
                     Image.asset(
                       "assets/icons/logoSA.svg",
-                      height: size.height * 0.35,
+                      height: size.height * 0.20,
                     ),
-                    const SizedBox(height: 30),
-                    const RoundedInput(icon: Icons.mail, hint: "Username"),
-                    const RoundedPasswordInput(hint: 'Password'),
-                    const RoundedButton(title: 'LOGIN')
+                    SizedBox(height: 30),
+
+                    // RoundedInput(icon: Icons.mail, hint: "Username"),
+                    InputContainer(
+                        child: TextField(
+                      controller: usernameController,
+                      cursorColor: kPrimaryColor,
+                      decoration: const InputDecoration(
+                          icon: Icon(Icons.email, color: kPrimaryColor),
+                          hintText: "Username",
+                          border: InputBorder.none),
+                    )),
+
+                    // RoundedPasswordInput(hint: 'Password'),
+
+                    InputContainer(
+                        child: TextField(
+                      controller: passwordController,
+                      cursorColor: kPrimaryColor,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                          icon: Icon(Icons.lock, color: kPrimaryColor),
+                          hintText: "Password",
+                          border: InputBorder.none),
+                    )),
+
+                    //RoundedButton(title: 'LOGIN'),
+
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        login();
+                      },
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        width: size.width * 0.8,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: kPrimaryColor,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "LOGIN",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -78,5 +133,85 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  static const snackBar = SnackBar(
+    content: Text("Remplissez tous les champs..."),
+  );
+  static const snackBar1 = SnackBar(
+    content: Text("Invalid Credentials"),
+  );
+
+  // login() async {
+  //   //Map data = {
+  //    // "username": username,
+  //    // "password": password
+  //  // };
+  //   if(passwordController.text.isNotEmpty && usernameController.text.isNotEmpty) {
+  //     dynamic jsonData;
+  //     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //     var response = await http.post(
+  //         Uri.parse("https://projet-carte.herokuapp.com/api/login"),
+  //         body: ({
+  //           "username": usernameController.text,
+  //           "password": passwordController.text
+  //         }));
+  //     if (response.statusCode == 200) {
+  //       jsonData = json.decode(response.body);
+  //       setState(() {
+  //         sharedPreferences.setString("accessToken", jsonData['accessToken']);
+  //         Navigator.push(
+  //                 context,
+  //                  MaterialPageRoute(builder: (context) {
+  //                    return Accueil();
+  //                 }),
+  //               );
+  //       //  Navigator.of(context).pushAndRemoveUntil(
+  //        //     MaterialPageRoute(builder: (BuildContext context) => Accueil()), (
+  //          //   Route<dynamic> route) => false);
+  //       });
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(snackBar1);
+  //     }
+  //   }else {
+  //       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  //   }
+  // }
+
+  //CREATE FUNCTION TO CALL POST API
+
+  Future<void> login() async {
+    if (passwordController.text.isNotEmpty &&
+        usernameController.text.isNotEmpty) {
+      dynamic jsonData;
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final response = await http.post(
+        Uri.parse('https://projet-carte.herokuapp.com/api/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'username': usernameController.text,
+          'password': passwordController.text
+        }),
+      );
+      if (response.statusCode == 200) {
+        // If the server did return a 201 CREATED response,
+        // then parse the JSON.
+        jsonData = json.decode(response.body);
+        setState(() {
+          sharedPreferences.setString("accessToken", jsonData['accessToken']);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const Accueil()));
+        });
+      } else {
+        // If the server did not return a 201 CREATED response,
+        // then throw an exception.
+        ScaffoldMessenger.of(context).showSnackBar(snackBar1);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }

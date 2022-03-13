@@ -17,27 +17,32 @@ class ApprenantState extends State<Apprenant> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
+    return SingleChildScrollView(
+        child: Scaffold(
       body: SizedBox(
         width: size.width,
         height: size.height,
         child: Card(
             color: kPrimaryColor,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              CupertinoButton(
-                  child: Image.asset(
-                    "assets/images/entree.png",
-                    width: size.width / 2.5,
-                  ),
-                  onPressed: () => scanQRCode("entree")),
-              CupertinoButton(
-                child: Image.asset("assets/images/sortie.png",
-                    width: size.width / 2.5),
-                onPressed: () => scanQRCode("sortie"),
+              Expanded(
+                  flex: 1,
+                  child: CupertinoButton(
+                      child: Image.asset(
+                        "assets/images/entree.png",
+                        width: size.width / 2,
+                      ),
+                      onPressed: () => scanQRCode("entree"))),
+              Expanded(
+                flex: 1,
+                child: CupertinoButton(
+                    child: Image.asset("assets/images/sortie.png",
+                        width: size.width / 2),
+                    onPressed: () => scanQRCode("sortie")),
               ),
             ])),
       ),
-    );
+    ));
   }
 
   Future<void> scanQRCode(String action) async {

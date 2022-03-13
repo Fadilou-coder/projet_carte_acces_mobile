@@ -29,7 +29,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   image_picker: ^0.8.4+10
 
   google_fonts: ^2.3.1
