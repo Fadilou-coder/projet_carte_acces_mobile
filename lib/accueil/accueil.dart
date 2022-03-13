@@ -60,7 +60,7 @@ class AccueilState extends State<Accueil> {
                 right: 0,
                 width: size.width,
                 height: size.height * 0.6,
-                child: Card(
+                child: const Card(
                     color: kPrimaryColor,
                     child: TabBarView(
                       children: [

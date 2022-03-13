@@ -8,6 +8,8 @@ import '../../accueil/accueil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -16,15 +18,12 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
 
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    double viewInset = MediaQuery.of(context).viewInsets.bottom;
     double defaultLoginSize = size.height - (size.height * 0.2);
-    double defaultRegisterSize = size.height - (size.height * 0.1);
 
     return Scaffold(
       body: Stack(
@@ -56,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Align(
             alignment: Alignment.center,
             child: SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                 width: size.width,
                 height: defaultLoginSize,
                 child: Column(
@@ -70,12 +69,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 26,
                           color: kPrimaryColor),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Image.asset(
                       "assets/icons/logoSA.svg",
                       height: size.height * 0.20,
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
                     // RoundedInput(icon: Icons.mail, hint: "Username"),
                     InputContainer(
@@ -106,7 +105,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     InkWell(
                       onTap: () {
                         setState(() {
-                          _isLoading = true;
                         });
                         login();
                       },
