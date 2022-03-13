@@ -142,42 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
     content: Text("Invalid Credentials"),
   );
 
-  // login() async {
-  //   //Map data = {
-  //    // "username": username,
-  //    // "password": password
-  //  // };
-  //   if(passwordController.text.isNotEmpty && usernameController.text.isNotEmpty) {
-  //     dynamic jsonData;
-  //     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  //     var response = await http.post(
-  //         Uri.parse("https://projet-carte.herokuapp.com/api/login"),
-  //         body: ({
-  //           "username": usernameController.text,
-  //           "password": passwordController.text
-  //         }));
-  //     if (response.statusCode == 200) {
-  //       jsonData = json.decode(response.body);
-  //       setState(() {
-  //         sharedPreferences.setString("accessToken", jsonData['accessToken']);
-  //         Navigator.push(
-  //                 context,
-  //                  MaterialPageRoute(builder: (context) {
-  //                    return Accueil();
-  //                 }),
-  //               );
-  //       //  Navigator.of(context).pushAndRemoveUntil(
-  //        //     MaterialPageRoute(builder: (BuildContext context) => Accueil()), (
-  //          //   Route<dynamic> route) => false);
-  //       });
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(snackBar1);
-  //     }
-  //   }else {
-  //       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  //   }
-  // }
-
   //CREATE FUNCTION TO CALL POST API
 
   Future<void> login() async {

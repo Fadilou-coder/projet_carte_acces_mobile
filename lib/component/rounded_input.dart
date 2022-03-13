@@ -15,15 +15,10 @@ class RoundedInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-<<<<<<< HEAD
-    return InputContainer(
-        child: TextField(
-=======
     var usernameController = TextEditingController();
     return InputContainer(
         child: TextField(
           controller: usernameController,
->>>>>>> 0b54d83d28d61d33ab638bfcc4916aef644c2193
       cursorColor: kPrimaryColor,
       decoration: InputDecoration(
           icon: Icon(icon, color: kPrimaryColor),

@@ -13,15 +13,10 @@ class RoundedPasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-<<<<<<< HEAD
-    return InputContainer(
-        child: TextField(
-=======
     var passwordController = TextEditingController();
     return InputContainer(
         child: TextField(
           controller: passwordController,
->>>>>>> 0b54d83d28d61d33ab638bfcc4916aef644c2193
           cursorColor: kPrimaryColor,
           obscureText: true,
           decoration: InputDecoration(
