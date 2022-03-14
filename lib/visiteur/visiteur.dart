@@ -32,16 +32,20 @@ class VisiteurState extends State<Visiteur> {
         child: Card(
             color: kPrimaryColor,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              CupertinoButton(
-                  child: Image.asset(
-                    "assets/images/entree.png",
-                    width: size.width / 2.5,
-                  ),
-                  onPressed: () => scanQRCode("entree")),
-              CupertinoButton(
-                  child: Image.asset("assets/images/sortie.png",
-                      width: size.width / 2.5),
-                  onPressed: () => scanQRCode("entree")),
+              Expanded(
+                  flex: 1,
+                  child: CupertinoButton(
+                      child: Image.asset(
+                        "assets/images/entree.png",
+                        width: size.width / 2,
+                      ),
+                      onPressed: () => scanQRCode("entree"))),
+              Expanded(
+                  flex: 1,
+                  child: CupertinoButton(
+                      child: Image.asset("assets/images/sortie.png",
+                          width: size.width / 2),
+                      onPressed: () => scanQRCode("entree"))),
             ])),
       ),
     );
