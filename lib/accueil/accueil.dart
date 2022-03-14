@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:projet_carte_acces/constants.dart';
 import 'package:projet_carte_acces/text_with_style.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Screens/login/login.dart';
 import '../apprenant/apprenant.dart';
 import '../visiteur/visiteur.dart';
 
@@ -13,12 +15,42 @@ class Accueil extends StatefulWidget {
 }
 
 class AccueilState extends State<Accueil> {
+
+  late SharedPreferences sharedPreferences;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  checkLoginStatus() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.getString("accessToken") == null) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+           // appBar: AppBar(
+             // backgroundColor: Colors.white,
+              //actions: <Widget>[
+               // TextButton(onPressed: () {
+               //   sharedPreferences.clear();
+                  //sharedPreferences.commit();
+                 // Navigator.push(context,
+                  //    MaterialPageRoute(builder: (context) => const LoginScreen()));
+               // },
+               //   child: const Text("Log Out", style: TextStyle(color: Colors.teal, fontSize: 18),),
+              //  ),
+              //],
+            //),
             body: SizedBox(
           width: size.width,
           height: size.height,
