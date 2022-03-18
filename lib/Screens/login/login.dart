@@ -18,7 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -83,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       cursorColor: kPrimaryColor,
                       decoration: const InputDecoration(
                           icon: Icon(Icons.email, color: kPrimaryColor),
-                          hintText: "Username",
+                          hintText: "Email",
                           border: InputBorder.none),
                     )),
 
@@ -104,8 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     InkWell(
                       onTap: () {
-                        setState(() {
-                        });
+                        setState(() {});
                         login();
                       },
                       borderRadius: BorderRadius.circular(30),
@@ -154,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          'username': usernameController.text,
+          'email': usernameController.text,
           'password': passwordController.text
         }),
       );

@@ -39,39 +39,31 @@ class VisiteurState extends State<Visiteur> {
                         "assets/images/entree.png",
                         width: size.width / 2,
                       ),
-                      onPressed: () => scanQRCode("entree"))),
+                      onPressed: () => test())),
               Expanded(
                   flex: 1,
                   child: CupertinoButton(
                       child: Image.asset("assets/images/sortie.png",
                           width: size.width / 2),
-                      onPressed: () => scanQRCode("entree"))),
+                      onPressed: () => scanQRCode("sortie"))),
             ])),
       ),
     );
   }
 
-  Future<void> scanQRCode(String action) async {
-    // SweetAlert.show(
-    //   context,
-    //   subtitle: "patientez...",
-    //   style: SweetAlertStyle.loading,
-    // );
-    // setState(() {
-    //   duration = 1;
-    // });
-    // Future.delayed(Duration(seconds: duration), () {
-    //   SweetAlert.show(context,
-    //       subtitle: "success",
-    //       style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-    //     if (isConfirm) {
-    //       scanQRCode(action);
-    //     }
-    //     // return false to keep dialog
-    //     return false;
-    //   });
-    // });
+  test() {
+    final user =
+        jsonDecode('{"cni": "1111111111111", "date": "2022-03-18 19:27:00"}');
+    var parsedDate = DateTime.parse(user['date']);
+    SweetAlert.show(context,
+        subtitle:
+            (DateTime.now().difference(parsedDate).inHours).round().toString(),
+        style: SweetAlertStyle.success, onPress: (bool isConfirm) {
+      return false;
+    });
+  }
 
+  Future<void> scanQRCode(String action) async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666',
@@ -85,9 +77,9 @@ class VisiteurState extends State<Visiteur> {
         subtitle: "patientez...",
         style: SweetAlertStyle.loading,
       );
-      if (action == "enntree") {
+      if (action == "entree") {
         // ignore: unrelated_type_equality_checks
-        if (entree(qrCode) == true) {
+        if ((await entree(qrCode)) == false) {
           setState(() {
             duration = 1;
           });
@@ -97,6 +89,7 @@ class VisiteurState extends State<Visiteur> {
                 style: SweetAlertStyle.success, onPress: (bool isConfirm) {
               if (isConfirm) {
                 scanQRCode(action);
+                return false;
               }
               // return false to keep dialog
               return false;
@@ -109,10 +102,11 @@ class VisiteurState extends State<Visiteur> {
           Future.delayed(Duration(seconds: duration), () {
             SweetAlert.show(context,
                 subtitle: "Attention!!!",
-                title: "Qr Code invalide!",
+                title: "Access refuser!",
                 style: SweetAlertStyle.error, onPress: (bool isConfirm) {
               if (isConfirm) {
                 scanQRCode(action);
+                return false;
               }
               // return false to keep dialog
               return false;
@@ -121,7 +115,7 @@ class VisiteurState extends State<Visiteur> {
         }
       } else if (action == "sortie") {
         // ignore: unrelated_type_equality_checks
-        if (sortie(qrCode) == true) {
+        if ((await sortie(qrCode)) == true) {
           setState(() {
             duration = 1;
           });
@@ -131,6 +125,7 @@ class VisiteurState extends State<Visiteur> {
                 style: SweetAlertStyle.success, onPress: (bool isConfirm) {
               if (isConfirm) {
                 scanQRCode(action);
+                return false;
               }
               // return false to keep dialog
               return false;
@@ -147,6 +142,7 @@ class VisiteurState extends State<Visiteur> {
                 style: SweetAlertStyle.error, onPress: (bool isConfirm) {
               if (isConfirm) {
                 scanQRCode(action);
+                return false;
               }
               // return false to keep dialog
               return false;
@@ -173,26 +169,11 @@ class VisiteurState extends State<Visiteur> {
   }
 
   Future<bool> entree(String qrCode) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString("accessToken");
-    final response = await http.post(
-      Uri.parse(
-          'https://projet-carte.herokuapp.com/api/visites/create/visiteur'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ' + token!,
-      },
-      body: jsonEncode(<String, Object>{
-        "apprenant": {'cni': qrCode}
-      }),
-    );
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
+    final user = jsonDecode(qrCode);
+    var parsedDate = DateTime.parse(user['date']);
+    if ((DateTime.now().difference(parsedDate).inHours).round() >= 1) {
       return true;
     } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
       return false;
     }
   }
@@ -200,6 +181,7 @@ class VisiteurState extends State<Visiteur> {
   Future<bool> sortie(String qrCode) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString("accessToken");
+    final user = jsonDecode(qrCode);
     final response = await http.post(
       Uri.parse(
           'https://projet-carte.herokuapp.com/api/visites/sortieVisiteur'),
@@ -208,16 +190,12 @@ class VisiteurState extends State<Visiteur> {
         'Authorization': 'Bearer ' + token!,
       },
       body: jsonEncode(<String, Object>{
-        "apprenant": {'cni': qrCode}
+        "visiteur": {'cni': user['cni']}
       }),
     );
     if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
       return true;
     } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
       return false;
     }
   }
