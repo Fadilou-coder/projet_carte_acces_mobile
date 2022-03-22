@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projet_carte_acces/constants.dart';
-import 'package:projet_carte_acces/text_with_style.dart';
+import 'package:odc_pointage/constants.dart';
+import 'package:odc_pointage/text_with_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Screens/login/login.dart';
@@ -45,10 +45,7 @@ class AccueilState extends State<Accueil> {
                 TextButton(
                   onPressed: () {
                     sharedPreferences.clear();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    checkLoginStatus();
                   },
                   child: Image.asset("assets/icons/logout.png"),
                 ),
@@ -61,13 +58,13 @@ class AccueilState extends State<Accueil> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   Positioned(
-                      top: size.height * 0.05,
+                      top: 20,
                       child: Image.asset(
                           "assets/images/Logo-Sonatel-Academy.png",
                           width: size.width / 1.5),
                       height: size.height * 0.2),
                   Positioned(
-                      top: size.height * 0.28,
+                      bottom: size.height * 0.56,
                       width: size.width,
                       height: size.height * 0.1,
                       child: Card(

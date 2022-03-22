@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:projet_carte_acces/constants.dart';
+import 'package:odc_pointage/constants.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'package:http/http.dart' as http;
