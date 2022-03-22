@@ -24,9 +24,8 @@ class AccueilState extends State<Accueil> {
   }
 
   checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var status = prefs.getBool('isLoggedIn') ?? false;
-    if (!status) {
+    sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.getString("accessToken") == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
@@ -64,7 +63,7 @@ class AccueilState extends State<Accueil> {
                           width: size.width / 1.5),
                       height: size.height * 0.2),
                   Positioned(
-                      bottom: size.height * 0.56,
+                      bottom: size.height * 0.55,
                       width: size.width,
                       height: size.height * 0.1,
                       child: Card(
