@@ -15,6 +15,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  bool isLoading = false;
+
   TextEditingController passwordController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
 
@@ -117,9 +120,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     //RoundedButton(title: 'LOGIN'),
 
                     InkWell(
-                      onTap: () {
-                        setState(() {});
+                      onTap: () async {
                         login();
+                         setState(() => isLoading = true);
+                         Future.delayed(const Duration(seconds: 3), (){
+                           setState(() => isLoading = false);
+                         });
                       },
                       borderRadius: BorderRadius.circular(30),
                       child: Container(
@@ -130,10 +136,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         alignment: Alignment.center,
-                        child: const Text(
-                          "LOGIN",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
+                        child: isLoading? Row(
+                               mainAxisAlignment: MainAxisAlignment.center,
+                               children: const [
+                                 CircularProgressIndicator(color: Colors.white),
+                                 SizedBox(width: 24),
+                                 Text('Please Wait...',  style: TextStyle(color: Colors.white, fontSize: 18))
+                               ],
+                           )
+                            : const Text('LOGIN',
+                               style: TextStyle(color: Colors.white, fontSize: 18))
+                        //child: const Text(
+                         // "LOGIN",
+                         // style: TextStyle(color: Colors.white, fontSize: 18),
+                       // ),
                       ),
                     ),
                   ],
