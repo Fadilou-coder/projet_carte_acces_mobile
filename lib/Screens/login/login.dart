@@ -19,6 +19,21 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
 
   @override
+  void initState() {
+    checkLoginStatus();
+    super.initState();
+  }
+
+  checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var status = prefs.getBool('isLoggedIn') ?? false;
+    if (status) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const Accueil()));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
@@ -162,6 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
         jsonData = json.decode(response.body);
         setState(() {
           sharedPreferences.setString("accessToken", jsonData['accessToken']);
+          sharedPreferences.setBool("isLoggedIn", true);
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const Accueil()));
         });

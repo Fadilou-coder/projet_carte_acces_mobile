@@ -39,7 +39,7 @@ class VisiteurState extends State<Visiteur> {
                         "assets/images/entree.png",
                         width: size.width / 2,
                       ),
-                      onPressed: () => test())),
+                      onPressed: () => scanQRCode("entree"))),
               Expanded(
                   flex: 1,
                   child: CupertinoButton(
@@ -51,18 +51,6 @@ class VisiteurState extends State<Visiteur> {
     );
   }
 
-  test() {
-    final user =
-        jsonDecode('{"cni": "1111111111111", "date": "2022-03-18 19:27:00"}');
-    var parsedDate = DateTime.parse(user['date']);
-    SweetAlert.show(context,
-        subtitle:
-            (DateTime.now().difference(parsedDate).inHours).round().toString(),
-        style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-      return false;
-    });
-  }
-
   Future<void> scanQRCode(String action) async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode(
@@ -72,82 +60,69 @@ class VisiteurState extends State<Visiteur> {
         ScanMode.QR,
       );
 
-      SweetAlert.show(
-        context,
-        subtitle: "patientez...",
-        style: SweetAlertStyle.loading,
-      );
-      if (action == "entree") {
-        // ignore: unrelated_type_equality_checks
-        if ((await entree(qrCode)) == false) {
-          setState(() {
-            duration = 1;
-          });
-          Future.delayed(Duration(seconds: duration), () {
-            SweetAlert.show(context,
-                subtitle: "success",
-                style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-              if (isConfirm) {
-                scanQRCode(action);
-                return false;
-              }
-              // return false to keep dialog
-              return false;
+      if ((qrCode != "-1")) {
+        SweetAlert.show(
+          context,
+          subtitle: "patientez...",
+          style: SweetAlertStyle.loading,
+        );
+        if (action == "entree") {
+          // ignore: unrelated_type_equality_checks
+          if ((await entree(qrCode)) == false) {
+            setState(() {
+              duration = 1;
             });
-          });
-        } else {
-          setState(() {
-            duration = 1;
-          });
-          Future.delayed(Duration(seconds: duration), () {
-            SweetAlert.show(context,
-                subtitle: "Attention!!!",
-                title: "Access refuser!",
-                style: SweetAlertStyle.error, onPress: (bool isConfirm) {
-              if (isConfirm) {
-                scanQRCode(action);
-                return false;
-              }
-              // return false to keep dialog
-              return false;
+            Future.delayed(Duration(seconds: duration), () {
+              SweetAlert.show(context,
+                  subtitle: "Access Accepter", style: SweetAlertStyle.success);
             });
-          });
-        }
-      } else if (action == "sortie") {
-        // ignore: unrelated_type_equality_checks
-        if ((await sortie(qrCode)) == true) {
-          setState(() {
-            duration = 1;
-          });
-          Future.delayed(Duration(seconds: duration), () {
-            SweetAlert.show(context,
-                subtitle: "success",
-                style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-              if (isConfirm) {
-                scanQRCode(action);
-                return false;
-              }
-              // return false to keep dialog
-              return false;
+          } else {
+            setState(() {
+              duration = 1;
             });
-          });
-        } else {
-          setState(() {
-            duration = 1;
-          });
-          Future.delayed(Duration(seconds: duration), () {
-            SweetAlert.show(context,
-                subtitle: "Attention!!!",
-                title: "Qr Code invalide!",
-                style: SweetAlertStyle.error, onPress: (bool isConfirm) {
-              if (isConfirm) {
-                scanQRCode(action);
-                return false;
-              }
-              // return false to keep dialog
-              return false;
+            Future.delayed(Duration(seconds: duration), () {
+              SweetAlert.show(context,
+                  subtitle: "Attention!!!",
+                  title: "Access refuser!",
+                  style: SweetAlertStyle.error);
             });
-          });
+          }
+        } else if (action == "sortie") {
+          // ignore: unrelated_type_equality_checks
+          if ((await sortie(qrCode)) == true) {
+            setState(() {
+              duration = 1;
+            });
+            Future.delayed(Duration(seconds: duration), () {
+              SweetAlert.show(context,
+                  subtitle: "success",
+                  style: SweetAlertStyle.success, onPress: (bool isConfirm) {
+                if (isConfirm) {
+                  scanQRCode(action);
+                  return false;
+                }
+                // return false to keep dialog
+                return false;
+              });
+            });
+          } else {
+            setState(() {
+              duration = 1;
+            });
+            Future.delayed(Duration(seconds: duration), () {
+              SweetAlert.show(context,
+                  subtitle: "Attention!!!",
+                  title: "Qr Code invalide!",
+                  style: SweetAlertStyle.error, onPress: (bool isConfirm) {
+                if (isConfirm) {
+                  scanQRCode(action);
+                  return false;
+                }
+                // return false to keep dialog
+                return false;
+              });
+            });
+          }
         }
       }
     } on PlatformException {
@@ -159,7 +134,7 @@ class VisiteurState extends State<Visiteur> {
             subtitle: "Erreur scan",
             style: SweetAlertStyle.confirm, onPress: (bool isConfirm) {
           if (isConfirm) {
-            scanQRCode(action);
+            return false;
           }
           // return false to keep dialog
           return false;
@@ -169,34 +144,44 @@ class VisiteurState extends State<Visiteur> {
   }
 
   Future<bool> entree(String qrCode) async {
-    final user = jsonDecode(qrCode);
-    var parsedDate = DateTime.parse(user['date']);
-    if ((DateTime.now().difference(parsedDate).inHours).round() >= 1) {
-      return true;
-    } else {
-      return false;
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    String decoded = stringToBase64.decode(qrCode);
+    Map<String, dynamic> user = jsonDecode(decoded);
+    if (user.containsKey("date")) {
+      var parsedDate = DateTime.parse(user['date']);
+      if ((DateTime.now().difference(parsedDate).inHours).round() >= 1) {
+        return true;
+      } else {
+        return false;
+      }
     }
+    return true;
   }
 
   Future<bool> sortie(String qrCode) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString("accessToken");
-    final user = jsonDecode(qrCode);
-    final response = await http.post(
-      Uri.parse(
-          'https://projet-carte.herokuapp.com/api/visites/sortieVisiteur'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ' + token!,
-      },
-      body: jsonEncode(<String, Object>{
-        "visiteur": {'cni': user['cni']}
-      }),
-    );
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    String decoded = stringToBase64.decode(qrCode);
+    Map<String, dynamic> user = jsonDecode(decoded);
+    if (user.containsKey("cni")) {
+      final response = await http.post(
+        Uri.parse(
+            'https://projet-carte.herokuapp.com/api/visites/sortieVisiteur'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ' + token!,
+        },
+        body: jsonEncode(<String, Object>{
+          "visiteur": {'cni': user['cni']}
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     }
+    return false;
   }
 }

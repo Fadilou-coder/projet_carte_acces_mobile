@@ -15,7 +15,6 @@ class Accueil extends StatefulWidget {
 }
 
 class AccueilState extends State<Accueil> {
-
   late SharedPreferences sharedPreferences;
 
   @override
@@ -25,8 +24,9 @@ class AccueilState extends State<Accueil> {
   }
 
   checkLoginStatus() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString("accessToken") == null) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var status = prefs.getBool('isLoggedIn') ?? false;
+    if (!status) {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
@@ -38,86 +38,90 @@ class AccueilState extends State<Accueil> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-           // appBar: AppBar(
-             // backgroundColor: Colors.white,
-              //actions: <Widget>[
-               // TextButton(onPressed: () {
-               //   sharedPreferences.clear();
-                  //sharedPreferences.commit();
-                 // Navigator.push(context,
-                  //    MaterialPageRoute(builder: (context) => const LoginScreen()));
-               // },
-               //   child: const Text("Log Out", style: TextStyle(color: Colors.teal, fontSize: 18),),
-              //  ),
-              //],
-            //),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 1.0,
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    sharedPreferences.clear();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()));
+                  },
+                  child: Image.asset("assets/icons/logout.png"),
+                ),
+              ],
+            ),
             body: SizedBox(
-          width: size.width,
-          height: size.height,
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Positioned(
-                  top: 0,
-                  child: Image.asset("assets/images/Logo-Sonatel-Academy.png",
-                      width: size.width / 1.5),
-                  height: size.height * 0.3),
-              Positioned(
-                  top: size.height * 0.3,
-                  width: size.width,
-                  height: size.height * 0.1,
-                  child: Card(
-                    color: kPrimaryLightColor,
-                    child: TabBar(
-                      indicatorColor: kPrimaryColor,
-                      labelColor: kPrimaryColor,
-                      tabs: [
-                        Tab(
-                          child: TextWithStyle(
-                            data: "Apprenant",
-                            color: kPrimaryColor,
-                          ),
+              width: size.width,
+              height: size.height,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Positioned(
+                      top: size.height * 0.05,
+                      child: Image.asset(
+                          "assets/images/Logo-Sonatel-Academy.png",
+                          width: size.width / 1.5),
+                      height: size.height * 0.2),
+                  Positioned(
+                      top: size.height * 0.28,
+                      width: size.width,
+                      height: size.height * 0.1,
+                      child: Card(
+                        color: kPrimaryLightColor,
+                        child: TabBar(
+                          indicatorColor: kPrimaryColor,
+                          labelColor: kPrimaryColor,
+                          tabs: [
+                            Tab(
+                              child: TextWithStyle(
+                                data: "Apprenant",
+                                color: kPrimaryColor,
+                              ),
+                            ),
+                            Tab(
+                              child: TextWithStyle(
+                                data: "Visiteur",
+                                color: kPrimaryColor,
+                              ),
+                            )
+                          ],
                         ),
-                        Tab(
-                          child: TextWithStyle(
-                            data: "Visiteur",
-                            color: kPrimaryColor,
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                width: size.width,
-                height: size.height * 0.6,
-                child: const Card(
-                    color: kPrimaryColor,
-                    child: TabBarView(
-                      children: [
-                        MaterialApp(
-                            debugShowCheckedModeBanner: false,
-                            home: Apprenant()),
-                        MaterialApp(
-                            debugShowCheckedModeBanner: false,
-                            home: Visiteur()),
-                      ],
-                    )),
+                      )),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    width: size.width,
+                    height: size.height * 0.55,
+                    child: const Card(
+                        color: kPrimaryColor,
+                        child: TabBarView(
+                          children: [
+                            MaterialApp(
+                                debugShowCheckedModeBanner: false,
+                                home: Apprenant()),
+                            MaterialApp(
+                                debugShowCheckedModeBanner: false,
+                                home: Visiteur()),
+                          ],
+                        )),
+                  ),
+                  Positioned(
+                      bottom: 10,
+                      child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextWithStyle(
+                              data: "sonatel academy  systeme pointage v1.0",
+                              color: Colors.white,
+                            )
+                          ]))
+                ],
               ),
-              Positioned(
-                  bottom: 10,
-                  child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextWithStyle(
-                          data: "sonatel academy  systeme pointage v1.0",
-                          color: Colors.white,
-                        )
-                      ]))
-            ],
-          ),
-        )));
+            )));
   }
 }

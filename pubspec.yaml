@@ -52,6 +52,7 @@ dependencies:
   cupertino_icons: ^1.0.4
   flutter_svg: ^1.0.3
   get: ^4.6.1
+  animated_splash_screen: ^1.2.0
 
 dev_dependencies:
   flutter_test:

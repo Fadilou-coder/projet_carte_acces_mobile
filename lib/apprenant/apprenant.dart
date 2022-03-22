@@ -95,14 +95,7 @@ class ApprenantState extends State<Apprenant> {
             });
             Future.delayed(Duration(seconds: duration), () {
               SweetAlert.show(context,
-                  subtitle: "success",
-                  style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-                if (isConfirm) {
-                  scanQRCode(action);
-                }
-                // return false to keep dialog
-                return false;
-              });
+                  subtitle: "success", style: SweetAlertStyle.success);
             });
           } else {
             setState(() {
@@ -110,15 +103,7 @@ class ApprenantState extends State<Apprenant> {
             });
             Future.delayed(Duration(seconds: duration), () {
               SweetAlert.show(context,
-                  subtitle: "Attention!!!",
-                  title: "Qr Code invalide!",
-                  style: SweetAlertStyle.error, onPress: (bool isConfirm) {
-                if (isConfirm) {
-                  scanQRCode(action);
-                }
-                // return false to keep dialog
-                return false;
-              });
+                  subtitle: "Attention!!!", title: "Qr Code invalide!");
             });
           }
         } else if (action == "sortie") {
@@ -128,14 +113,7 @@ class ApprenantState extends State<Apprenant> {
             });
             Future.delayed(Duration(seconds: duration), () {
               SweetAlert.show(context,
-                  subtitle: "success",
-                  style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-                if (isConfirm) {
-                  scanQRCode(action);
-                }
-                // return false to keep dialog
-                return false;
-              });
+                  subtitle: "success", style: SweetAlertStyle.success);
             });
           } else {
             setState(() {
@@ -145,13 +123,7 @@ class ApprenantState extends State<Apprenant> {
               SweetAlert.show(context,
                   subtitle: "Attention!!!",
                   title: "Qr Code invalide!",
-                  style: SweetAlertStyle.error, onPress: (bool isConfirm) {
-                if (isConfirm) {
-                  scanQRCode(action);
-                }
-                // return false to keep dialog
-                return false;
-              });
+                  style: SweetAlertStyle.error);
             });
           }
         }
@@ -182,12 +154,8 @@ class ApprenantState extends State<Apprenant> {
       }),
     );
     if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
       return true;
     } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
       return false;
     }
   }
@@ -207,12 +175,8 @@ class ApprenantState extends State<Apprenant> {
       }),
     );
     if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
       return true;
     } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
       return false;
     }
   }
