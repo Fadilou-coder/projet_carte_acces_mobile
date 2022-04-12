@@ -20,7 +20,7 @@ class RoundedButton extends StatelessWidget {
         width: size.width * 0.8,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: kPrimaryColor,
+            color: OrangeColor,
         ),
         padding: const EdgeInsets.symmetric(vertical: 5),
         alignment: Alignment.center,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:odc_pointage/accueil/accueilApp.dart';
 import '../../component/input_container.dart';
 import '../../constants.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   bool isLoading = false;
 
   TextEditingController passwordController = TextEditingController();
@@ -31,8 +31,13 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var status = prefs.getBool('isLoggedIn') ?? false;
     if (status) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const Accueil()));
+      if (prefs.getString("role") == "APPRENANT") {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const AccueilApp()));
+      } else {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Accueil()));
+      }
     }
   }
 
@@ -47,15 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Positioned(
             top: 0,
-            right: -35,
+            right: 0,
             child: Image.asset(
-              "assets/images/main.jpg",
+              "assets/images/main.png",
               width: size.width * 0.3,
             ),
           ),
           Positioned(
-            top: 0,
-            left: 0,
+            top: -30,
+            left: -30,
             child: Image.asset(
               "assets/images/green_top.png",
               width: size.width * 0.3,
@@ -79,27 +84,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const SizedBox(height: 20),
+                    Image.asset(
+                      "assets/images/login.png",
+                      height: size.height * 0.20,
+                    ),
+                    const SizedBox(height: 30),
                     const Text(
                       "Authentification",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 26,
-                          color: kPrimaryColor),
+                          color: OrangeColor),
                     ),
-                    const SizedBox(height: 30),
-                    Image.asset(
-                      "assets/icons/logoSA.svg",
-                      height: size.height * 0.20,
-                    ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
 
                     // RoundedInput(icon: Icons.mail, hint: "Username"),
                     InputContainer(
                         child: TextField(
                       controller: usernameController,
-                      cursorColor: kPrimaryColor,
+                      cursorColor: OrangeColor,
                       decoration: const InputDecoration(
-                          icon: Icon(Icons.email, color: kPrimaryColor),
+                          icon: Icon(Icons.email, color: OrangeColor),
                           hintText: "Email",
                           border: InputBorder.none),
                     )),
@@ -109,48 +115,46 @@ class _LoginScreenState extends State<LoginScreen> {
                     InputContainer(
                         child: TextField(
                       controller: passwordController,
-                      cursorColor: kPrimaryColor,
+                      cursorColor: OrangeColor,
                       obscureText: true,
                       decoration: const InputDecoration(
-                          icon: Icon(Icons.lock, color: kPrimaryColor),
+                          icon: Icon(Icons.lock, color: OrangeColor),
                           hintText: "Password",
                           border: InputBorder.none),
                     )),
 
-                    //RoundedButton(title: 'LOGIN'),
-
                     InkWell(
                       onTap: () async {
+                        setState(() => isLoading = true);
                         login();
-                         setState(() => isLoading = true);
-                         Future.delayed(const Duration(seconds: 3), (){
-                           setState(() => isLoading = false);
-                         });
                       },
                       borderRadius: BorderRadius.circular(30),
                       child: Container(
-                        width: size.width * 0.8,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: kPrimaryColor,
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        alignment: Alignment.center,
-                        child: isLoading? Row(
-                               mainAxisAlignment: MainAxisAlignment.center,
-                               children: const [
-                                 CircularProgressIndicator(color: Colors.white),
-                                 SizedBox(width: 24),
-                                 Text('Please Wait...',  style: TextStyle(color: Colors.white, fontSize: 18))
-                               ],
-                           )
-                            : const Text('LOGIN',
-                               style: TextStyle(color: Colors.white, fontSize: 18))
-                        //child: const Text(
-                         // "LOGIN",
-                         // style: TextStyle(color: Colors.white, fontSize: 18),
-                       // ),
-                      ),
+                          width: size.width * 0.8,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: OrangeColor,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          alignment: Alignment.center,
+                          child: isLoading
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    CircularProgressIndicator(
+                                        color: Colors.white),
+                                    SizedBox(width: 24),
+                                    Text('Please Wait...',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 18))
+                                  ],
+                                )
+                              : const Text('LOGIN',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold))),
                     ),
                   ],
                 ),
@@ -179,6 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await SharedPreferences.getInstance();
       final response = await http.post(
         Uri.parse('https://projet-carte.herokuapp.com/api/login'),
+        // Uri.parse('http://localhost:8080/api/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -187,23 +192,34 @@ class _LoginScreenState extends State<LoginScreen> {
           'password': passwordController.text
         }),
       );
+
       if (response.statusCode == 200) {
         // If the server did return a 201 CREATED response,
         // then parse the JSON.
         jsonData = json.decode(response.body);
         setState(() {
           sharedPreferences.setString("accessToken", jsonData['accessToken']);
+          sharedPreferences.setString("role", jsonData['role'][0]);
+          sharedPreferences.setString("id", jsonData['id'].toString());
+
           sharedPreferences.setBool("isLoggedIn", true);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const Accueil()));
+          if (jsonData['role'][0] == "APPRENANT") {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AccueilApp()));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const Accueil()));
+          }
         });
       } else {
         // If the server did not return a 201 CREATED response,
         // then throw an exception.
         ScaffoldMessenger.of(context).showSnackBar(snackBar1);
+        setState(() => isLoading = false);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() => isLoading = false);
     }
   }
 }

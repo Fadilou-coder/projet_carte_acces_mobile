@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:odc_pointage/constants.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import 'package:http/http.dart' as http;
@@ -30,7 +29,7 @@ class VisiteurState extends State<Visiteur> {
         width: size.width,
         height: size.height,
         child: Card(
-            color: kPrimaryColor,
+            color: Colors.white,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Expanded(
                   flex: 1,
@@ -144,9 +143,7 @@ class VisiteurState extends State<Visiteur> {
   }
 
   Future<bool> entree(String qrCode) async {
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String decoded = stringToBase64.decode(qrCode);
-    Map<String, dynamic> user = jsonDecode(decoded);
+    Map<String, dynamic> user = jsonDecode(qrCode);
     if (user.containsKey("date")) {
       var parsedDate = DateTime.parse(user['date']);
       if ((DateTime.now().difference(parsedDate).inHours).round() >= 1) {
@@ -161,9 +158,7 @@ class VisiteurState extends State<Visiteur> {
   Future<bool> sortie(String qrCode) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString("accessToken");
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String decoded = stringToBase64.decode(qrCode);
-    Map<String, dynamic> user = jsonDecode(decoded);
+    Map<String, dynamic> user = jsonDecode(qrCode);
     if (user.containsKey("cni")) {
       final response = await http.post(
         Uri.parse(
@@ -184,4 +179,6 @@ class VisiteurState extends State<Visiteur> {
     }
     return false;
   }
+
+  
 }

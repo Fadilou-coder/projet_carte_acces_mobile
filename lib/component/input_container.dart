@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
 
 class InputContainer extends StatelessWidget {
-  const InputContainer({
-    Key? key,
-    required this.child
-  }) : super(key: key);
+  const InputContainer({Key? key, required this.child ,}) : super(key: key);
 
   final Widget child;
 
@@ -17,10 +13,8 @@ class InputContainer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         width: size.width * 0.8,
         decoration: BoxDecoration(
-          color: kPrimaryColor.withAlpha(50),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: child
-    );
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.black)),
+        child: child);
   }
 }

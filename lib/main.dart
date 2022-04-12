@@ -3,7 +3,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:odc_pointage/Screens/login/login.dart';
-import 'package:odc_pointage/constants.dart';
 import 'package:page_transition/page_transition.dart';
 
 void main() {
@@ -21,10 +20,9 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: AnimatedSplashScreen(
             duration: 3000,
-            splash: "assets/images/logo-odc.png",
+            splash: "assets/images/logo_odc.png",
             nextScreen: const LoginScreen(),
             splashTransition: SplashTransition.fadeTransition,
-            pageTransitionType: PageTransitionType.bottomToTop,
-            backgroundColor: kPrimaryColor));
+            pageTransitionType: PageTransitionType.bottomToTop));
   }
 }

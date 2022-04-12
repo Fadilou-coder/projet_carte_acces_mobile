@@ -25,7 +25,7 @@ class AccueilState extends State<Accueil> {
 
   checkLoginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString("accessToken") == null) {
+    if (sharedPreferences.getString("accessToken") == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
@@ -39,6 +39,7 @@ class AccueilState extends State<Accueil> {
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.white,
+              automaticallyImplyLeading: false,
               elevation: 1.0,
               actions: <Widget>[
                 TextButton(
@@ -58,8 +59,7 @@ class AccueilState extends State<Accueil> {
                 children: <Widget>[
                   Positioned(
                       top: 20,
-                      child: Image.asset(
-                          "assets/images/Logo-Sonatel-Academy.png",
+                      child: Image.asset("assets/images/logo_odc.png",
                           width: size.width / 1.5),
                       height: size.height * 0.2),
                   Positioned(
@@ -69,19 +69,19 @@ class AccueilState extends State<Accueil> {
                       child: Card(
                         color: kPrimaryLightColor,
                         child: TabBar(
-                          indicatorColor: kPrimaryColor,
-                          labelColor: kPrimaryColor,
+                          indicatorColor: OrangeColor,
+                          labelColor: OrangeColor,
                           tabs: [
                             Tab(
                               child: TextWithStyle(
                                 data: "Apprenant",
-                                color: kPrimaryColor,
+                                color: OrangeColor,
                               ),
                             ),
                             Tab(
                               child: TextWithStyle(
                                 data: "Visiteur",
-                                color: kPrimaryColor,
+                                color: OrangeColor,
                               ),
                             )
                           ],
@@ -93,7 +93,7 @@ class AccueilState extends State<Accueil> {
                     width: size.width,
                     height: size.height * 0.55,
                     child: const Card(
-                        color: kPrimaryColor,
+                        color: Colors.white,
                         child: TabBarView(
                           children: [
                             MaterialApp(
@@ -111,9 +111,21 @@ class AccueilState extends State<Accueil> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            TextWithStyle(
-                              data: "sonatel academy  systeme pointage v1.0",
-                              color: Colors.white,
+                            Row(
+                              children: [
+                                TextWithStyle(
+                                  data: "Orange ",
+                                  color: OrangeColor,
+                                ),
+                                TextWithStyle(
+                                  data: "Digital Center",
+                                  color: Colors.black,
+                                ),
+                                TextWithStyle(
+                                  data: " systeme pointage v1.0",
+                                  color: OrangeColor,
+                                )
+                              ],
                             )
                           ]))
                 ],
