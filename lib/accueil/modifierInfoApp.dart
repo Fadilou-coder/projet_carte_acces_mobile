@@ -1,8 +1,8 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:odc_pointage/accueil/accueilApp.dart';
 import 'package:odc_pointage/constants.dart';
@@ -80,7 +80,7 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
         password.text = user['password'];
         confirmPassword.text = user['password'];
         phone.text = user['phone'];
-        adresse.text = user['adresse'];
+        adresse.text = user['addresse'];
         numTuteur.text = user['numTuteur'];
         dateNaissance.text = user['dateNaissance'];
         lieuNaissance.text = user['lieuNaissance'];
@@ -95,7 +95,7 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
     {'value': 'Passport', 'label': 'Passport'}
   ];
 
-  Future<void> updateApp(File file) async {
+  Future<void> updateApp() async {
     sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString("accessToken");
     String? id = sharedPreferences.getString("id");
@@ -103,48 +103,54 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
     map['prenom'] = prenom.text;
     map['nom'] = nom.text;
     map['email'] = email.text;
-    map['password'] = password.text;
+    // map['password'] = password.text;
     map['phone'] = phone.text;
-    map['addresse'] = adresse.text;
+    map['adresse'] = adresse.text;
     map['numTuteur'] = numTuteur.text;
     map['dateNaissance'] = dateNaissance.text;
     map['lieuNaissance'] = lieuNaissance.text;
     map['typePiece'] = typePiece.text;
     map['numPiece'] = numPiece.text;
+    map['promo'] = "";
+    map['referentiel'] = "";
 
-    var request = http.MultipartRequest("PUT",
+    XFile xFile = XFile.fromData(Uint8List(16), path: "assets/images/test.jpg");
+    var _request = http.MultipartRequest('PUT',
         Uri.parse('https://projet-carte.herokuapp.com/api/apprenants/' + id!));
+    _request.headers.addAll({
+      'Authorization': 'Bearer $token',
+      'Content-Type':
+          'multipart/form-data; boundary=<calculated when request is sent>'
+    });
+    _request.fields.addAll(map);
+    _request.files.add(http.MultipartFile.fromBytes(
+        'avatar',
+        await xFile.readAsBytes().then((value) {
+          return value.cast();
+        }),
+        filename: xFile.path.toString() + xFile.name));
+    return await _request.send().then((value) {
+      if (value.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    });
 
-    request.headers.addAll({"Authorization": "Bearer " + token!});
-    request.fields.addAll(map);
-    request.files.add(await http.MultipartFile.fromPath("avatar", file.path));
-    var sendRequest = await request.send();
-    var response = await http.Response.fromStream(sendRequest);
-
-    // final response = await http.post(
-    //   Uri.parse('https://projet-carte.herokuapp.com/api/apprenants/' + id!),
-    //   // Uri.parse('http://localhost:8080/api/apprenants/' + id),
-    //   headers: <String, String>{
-    //     'Content-Type': 'application/json; charset=UTF-8',
-    //     'Authorization': 'Bearer ' + token!,
-    //   },
-    //   body: map,
-    // );
-
-    if (response.statusCode == 200) {
-      setState(() => onPressed = false);
-      print(response.body.toString());
-      // SweetAlert.show(context,
-      //     subtitle: "success",
-      //     style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-      //   if (isConfirm) {
-      //     Navigator.push(context,
-      //         MaterialPageRoute(builder: (context) => const AccueilApp()));
-      //     return false;
-      //   }
-      //   return true;
-      // });
-    }
+    // if (response.statusCode == 200) {
+    //   setState(() => onPressed = false);
+    //   print(response.body.toString());
+    // SweetAlert.show(context,
+    //     subtitle: "success",
+    //     style: SweetAlertStyle.success, onPress: (bool isConfirm) {
+    //   if (isConfirm) {
+    //     Navigator.push(context,
+    //         MaterialPageRoute(builder: (context) => const AccueilApp()));
+    //     return false;
+    //   }
+    //   return true;
+    // });
+    // }
   }
 
   @override
@@ -346,7 +352,7 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
                   InkWell(
                     onTap: () async {
                       setState(() => onPressed = true);
-                      updateApp(new File("assets/images/test.jpg"));
+                      updateApp();
                     },
                     borderRadius: BorderRadius.circular(30),
                     child: Container(

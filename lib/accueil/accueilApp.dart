@@ -110,7 +110,7 @@ class AccueilAppState extends State<AccueilApp> {
                         Row(
                           children: [
                             TextWithStyle(
-                                data: "Nombre de minute Retard: ",
+                                data: "Nombre de minutes Retard: ",
                                 size: 22,
                                 weight: FontWeight.bold),
                             TextWithStyle(
