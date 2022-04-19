@@ -1,41 +1,35 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'dart:convert';
+import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:odc_pointage/accueil/accueilApp.dart';
 import 'package:odc_pointage/constants.dart';
 import 'package:odc_pointage/text_with_style.dart';
-import 'package:select_form_field/select_form_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:sweetalert/sweetalert.dart';
 
 import '../Screens/login/login.dart';
 import '../component/input_container.dart';
-import 'ModifierPassword.dart';
+import 'modifierInfoApp.dart';
 
-class ModifierInfoApp extends StatefulWidget {
-  const ModifierInfoApp({Key? key}) : super(key: key);
+class ModifierPassword extends StatefulWidget {
+  const ModifierPassword({Key? key}) : super(key: key);
 
   @override
-  State<ModifierInfoApp> createState() => ModifierInfoAppState();
+  State<ModifierPassword> createState() => ModifierPasswordState();
 }
 
-class ModifierInfoAppState extends State<ModifierInfoApp> {
+class ModifierPasswordState extends State<ModifierPassword> {
   bool onPressed = false;
   late SharedPreferences sharedPreferences;
 
-  TextEditingController prenom = TextEditingController();
-  TextEditingController nom = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController phone = TextEditingController();
-  TextEditingController adresse = TextEditingController();
-  TextEditingController typePiece = TextEditingController();
-  TextEditingController numPiece = TextEditingController();
-  TextEditingController dateNaissance = TextEditingController();
-  TextEditingController lieuNaissance = TextEditingController();
-  TextEditingController numTuteur = TextEditingController();
+  dynamic user;
+
+  TextEditingController password = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
 
   @override
   void initState() {
@@ -53,7 +47,6 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
   }
 
   Future<void> findApp() async {
-    dynamic user;
     sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString("accessToken");
     String? id = sharedPreferences.getString("id");
@@ -68,83 +61,61 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
     );
 
     if (response.statusCode == 200) {
-      user = json.decode(response.body);
-      setState(() {
-        prenom.text = user['prenom'];
-        nom.text = user['nom'];
-        email.text = user['email'];
-        phone.text = user['phone'];
-        adresse.text = user['addresse'];
-        numTuteur.text = user['numTuteur'];
-        dateNaissance.text = user['dateNaissance'];
-        lieuNaissance.text = user['lieuNaissance'];
-        typePiece.text = user['typePiece'];
-        numPiece.text = user['numPiece'];
-      });
+      setState(() => user = json.decode(response.body));
     }
   }
-
-  final List<Map<String, dynamic>> _items = [
-    {'value': 'CNI', 'label': 'CNI'},
-    {'value': 'Passport', 'label': 'Passport'}
-  ];
 
   Future<void> updateApp() async {
     sharedPreferences = await SharedPreferences.getInstance();
     String? token = sharedPreferences.getString("accessToken");
     String? id = sharedPreferences.getString("id");
-    var app = new Map<String, String>();
-    app['prenom'] = prenom.text;
-    app['nom'] = nom.text;
-    app['email'] = email.text;
-    app['phone'] = phone.text;
-    app['addresse'] = adresse.text;
-    app['numTuteur'] = numTuteur.text;
-    app['dateNaissance'] = dateNaissance.text;
-    app['lieuNaissance'] = lieuNaissance.text;
-    app['typePiece'] = typePiece.text;
-    app['numPiece'] = numPiece.text;
-
-    if (prenom.text.trim().isEmpty ||
-        nom.text.trim().isEmpty ||
-        email.text.trim().isEmpty ||
-        adresse.text.trim().isEmpty ||
-        numTuteur.text.trim().isEmpty ||
-        lieuNaissance.text.trim().isEmpty ||
-        typePiece.text.trim().isEmpty ||
-        numPiece.text.trim().isEmpty ||
-        dateNaissance.text.trim().isEmpty) {
+    if (password.text.trim().isEmpty ||
+        newPassword.text.trim().isEmpty ||
+        confirmPassword.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Remplissez tous les champs..."),
+        content: Text("remplir tous les champs..."),
       ));
       setState(() => onPressed = false);
     } else {
-      final response = await http.put(
-        Uri.parse(
-            'https://projet-carte.herokuapp.com/api/apprenants/field/' + id!),
-        headers: <String, String>{
-          'Authorization': 'Bearer ' + token!,
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(app),
-      );
-      setState(() => onPressed = false);
-      if (response.statusCode == 200) {
-        SweetAlert.show(context,
-            subtitle: "success",
-            style: SweetAlertStyle.success, onPress: (bool isConfirm) {
-          if (isConfirm) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const AccueilApp()));
-            return false;
-          }
-          return true;
-        });
+      if (new DBCrypt().checkpw(password.text, user['password'])) {
+        if (newPassword.text == confirmPassword.text) {
+          final response = await http.put(
+            Uri.parse(
+                'https://projet-carte.herokuapp.com/api/apprenants/field/' +
+                    id!),
+            headers: <String, String>{
+              'Authorization': 'Bearer ' + token!,
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(<String, String>{'password': newPassword.text}),
+          );
+          if (response.statusCode == 200) {
+            setState(() => onPressed = false);
+            SweetAlert.show(context,
+                subtitle: "success",
+                style: SweetAlertStyle.success, onPress: (bool isConfirm) {
+              if (isConfirm) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccueilApp()));
+                return false;
+              }
+              return true;
+            });
+          } else
+            setState(() => onPressed = false);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Les deux mot de passe ne correspondent pas..."),
+          ));
+          setState(() => onPressed = false);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: TextWithStyle(
-              data: jsonDecode(response.body)['message'], color: OrangeColor),
+          content: Text("Mot de passe incorrect..."),
         ));
+        setState(() => onPressed = false);
       }
     }
   }
@@ -229,105 +200,32 @@ class ModifierInfoAppState extends State<ModifierInfoApp> {
                   const SizedBox(height: 10),
                   InputContainer(
                       child: TextField(
-                    controller: prenom,
+                    controller: password,
                     cursorColor: OrangeColor,
+                    obscureText: true,
                     decoration: const InputDecoration(
-                        hintText: "Prénom", border: InputBorder.none),
-                  )),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                    controller: nom,
-                    cursorColor: OrangeColor,
-                    decoration: const InputDecoration(
-                        hintText: "Nom", border: InputBorder.none),
-                  )),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                    controller: email,
-                    cursorColor: OrangeColor,
-                    decoration: const InputDecoration(
-                        hintText: "Email", border: InputBorder.none),
-                  )),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                    controller: phone,
-                    cursorColor: OrangeColor,
-                    decoration: const InputDecoration(
-                        hintText: "N° Téléphone", border: InputBorder.none),
-                  )),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                    controller: adresse,
-                    cursorColor: OrangeColor,
-                    decoration: const InputDecoration(
-                        hintText: "Adresse", border: InputBorder.none),
-                  )),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: SelectFormField(
-                          type: SelectFormFieldType.dropdown,
-                          initialValue: 'CNI',
-                          labelText: 'Type de Piece',
-                          items: _items,
-                          onChanged: (val) => setState(() {
-                                typePiece.text = val;
-                              }),
-                          onSaved: (val) => setState(() {
-                                typePiece.text = val!;
-                              }))),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                    controller: numPiece,
-                    cursorColor: OrangeColor,
-                    decoration: const InputDecoration(
-                        hintText: "N° Piece", border: InputBorder.none),
-                  )),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                          controller: dateNaissance,
-                          cursorColor: OrangeColor,
-                          decoration: const InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              labelText: "Date de Naissance",
-                              border: InputBorder.none),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime(2007),
-                                firstDate: DateTime(1991),
-                                lastDate: DateTime(2007));
-                            if (pickedDate != null) {
-                              String date =
-                                  DateFormat('yyyy-MM-dd').format(pickedDate);
-
-                              setState(() {
-                                dateNaissance.text = date;
-                              });
-                            } else {}
-                          })),
-                  const SizedBox(height: 10),
-                  InputContainer(
-                      child: TextField(
-                    controller: lieuNaissance,
-                    cursorColor: OrangeColor,
-                    decoration: const InputDecoration(
-                        hintText: "Lieu de Naissance",
+                        hintText: "Mot de passe actuel",
                         border: InputBorder.none),
                   )),
                   const SizedBox(height: 10),
                   InputContainer(
                       child: TextField(
-                    controller: numTuteur,
+                    controller: newPassword,
                     cursorColor: OrangeColor,
+                    obscureText: true,
                     decoration: const InputDecoration(
-                        hintText: "N° Tuteur", border: InputBorder.none),
+                        hintText: "Nouveau mot de passe",
+                        border: InputBorder.none),
+                  )),
+                  const SizedBox(height: 10),
+                  InputContainer(
+                      child: TextField(
+                    controller: confirmPassword,
+                    cursorColor: OrangeColor,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        hintText: "Confirmer mot de passe",
+                        border: InputBorder.none),
                   )),
                   const SizedBox(height: 10),
                   InkWell(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:odc_pointage/accueil/ModifierPassword.dart';
 import 'package:odc_pointage/carteApprenant.dart';
 import 'package:odc_pointage/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import '../Screens/login/login.dart';
 import '../text_with_style.dart';
@@ -17,10 +19,14 @@ class AccueilApp extends StatefulWidget {
 class AccueilAppState extends State<AccueilApp> {
   late SharedPreferences sharedPreferences;
 
+  String nbrAbs = "00";
+  String nbrRtd = "00";
+
   @override
   void initState() {
     super.initState();
     checkLoginStatus();
+    checkStats();
   }
 
   checkLoginStatus() async {
@@ -28,6 +34,63 @@ class AccueilAppState extends State<AccueilApp> {
     if (sharedPreferences.getString("accessToken") == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }
+  }
+
+  checkStats() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString("accessToken");
+    String? id = sharedPreferences.getString("id");
+
+    DateTime today = new DateTime.now();
+
+    String mp = (today.month + 1).toString();
+
+    print(today.toString().substring(0, 7) + "-01");
+    print(today.toString().substring(0, 6) + mp + "-01");
+
+    final response = await http.get(
+      Uri.parse('https://projet-carte.herokuapp.com/api/apprenants/' +
+          id! +
+          '/nbrAbs/' +
+          today.toString().substring(0, 7) +
+          "-01" +
+          '/' +
+          today.toString().substring(0, 6) +
+          mp +
+          "-01"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ' + token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        nbrAbs = response.body;
+      });
+    }
+
+    final response1 = await http.get(
+      Uri.parse('https://projet-carte.herokuapp.com/api/apprenants/' +
+          id +
+          '/nbrRetard/' +
+          today.toString().substring(0, 7) +
+          "-01" +
+          '/' +
+          today.toString().substring(0, 6) +
+          mp +
+          "-01"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ' + token
+      },
+    );
+
+    if (response1.statusCode == 200) {
+      setState(() {
+        nbrRtd = response1.body;
+      });
     }
   }
 
@@ -58,10 +121,14 @@ class AccueilAppState extends State<AccueilApp> {
                         ),
                         PopupMenuItem<int>(
                           value: 1,
-                          child: Text("Parametre Compte"),
+                          child: Text("Modifier mes informations"),
                         ),
                         PopupMenuItem<int>(
                           value: 2,
+                          child: Text("Changer de mot de passe"),
+                        ),
+                        PopupMenuItem<int>(
+                          value: 3,
                           child: Image.asset("assets/icons/logout.png",
                               width: size.width / 4),
                         ),
@@ -79,6 +146,12 @@ class AccueilAppState extends State<AccueilApp> {
                             MaterialPageRoute(
                                 builder: (context) => const ModifierInfoApp()));
                       } else if (value == 2) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ModifierPassword()));
+                      } else if (value == 3) {
                         sharedPreferences.clear();
                         checkLoginStatus();
                       }
@@ -114,7 +187,7 @@ class AccueilAppState extends State<AccueilApp> {
                                 size: 22,
                                 weight: FontWeight.bold),
                             TextWithStyle(
-                              data: "12",
+                              data: nbrRtd,
                               size: 22,
                               color: OrangeColor,
                             )
@@ -127,13 +200,13 @@ class AccueilAppState extends State<AccueilApp> {
                                 size: 22,
                                 weight: FontWeight.bold),
                             TextWithStyle(
-                              data: "00",
+                              data: nbrAbs,
                               size: 22,
                               color: OrangeColor,
                             )
                           ],
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 5),
                         TextWithStyle(
                             data: "Attention!!!",
                             size: 22,

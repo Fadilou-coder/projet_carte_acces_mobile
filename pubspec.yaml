@@ -59,6 +59,9 @@ dependencies:
   http_parser: ^4.0.0
   dio: ^4.0.6
   file_selector: ^0.8.4+1
+  dbcrypt: ^1.0.0
+  device_info_plus: ^3.2.3
+  mac_address: ^1.0.0
 
 dev_dependencies:
   flutter_test:
