@@ -352,13 +352,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  mac_address:
-    dependency: "direct main"
-    description:
-      name: mac_address
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   matcher:
     dependency: transitive
     description:

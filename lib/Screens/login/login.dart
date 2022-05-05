@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mac_address/mac_address.dart';
 import 'package:odc_pointage/accueil/accueilApp.dart';
 import '../../component/input_container.dart';
 import '../../constants.dart';
@@ -29,25 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  Map<String, dynamic> _deviceData = <String, dynamic>{};
 
-  String _deviceMAC = '';
-  Future<void> initMacAddress() async {
-    String macAddress;
-
-    try {
-      macAddress = await GetMac.macAddress;
-    } on PlatformException {
-      macAddress = 'Error getting the MAC address.';
-    }
-
-    if (!mounted) return;
-
-    print(macAddress);
-    setState(() {
-      _deviceMAC = macAddress;
-    });
-  }
+  String _deviceinfo = '';
 
   @override
   void initState() {
@@ -185,6 +166,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold))),
                     ),
+
+                    SizedBox(height: 30),
+                    Row(
+                      children: [
+                        TextWithStyle(data: "          "),
+                        TextWithStyle(data: "ID: "),
+                        TextWithStyle(
+                            data: _deviceinfo, weight: FontWeight.bold)
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -205,15 +196,14 @@ class _LoginScreenState extends State<LoginScreen> {
   //CREATE FUNCTION TO CALL POST API
 
   Future<void> login() async {
-    initMacAddress();
     if (passwordController.text.isNotEmpty &&
         usernameController.text.isNotEmpty) {
+      initPlatformState();
       dynamic jsonData;
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       final response = await http.post(
         Uri.parse('https://projet-carte.herokuapp.com/api/login'),
-        // Uri.parse('http://localhost:8080/api/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -239,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
           final res = await http.get(
               Uri.parse(
                   'https://projet-carte.herokuapp.com/api/devices/adress/' +
-                      _deviceMAC),
+                      _deviceinfo),
               headers: <String, String>{
                 'Content-Type': 'application/json; charset=UTF-8',
               });
@@ -258,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: TextWithStyle(
                   data:
-                      "Vous ne pouvez pas acceder à l'ppalication avec cet appareil veuillez contacter l'administration",
+                      "Vous ne pouvez pas acceder à l'application avec cet appareil veuillez contacter l'administration",
                   color: OrangeColor),
             ));
             setState(() => isLoading = false);
@@ -280,22 +270,16 @@ class _LoginScreenState extends State<LoginScreen> {
     var deviceData = <String, dynamic>{};
 
     try {
-      if (kIsWeb) {
-        deviceData = _readWebBrowserInfo(await deviceInfoPlugin.webBrowserInfo);
-      } else {
-        if (Platform.isAndroid) {
-          deviceData =
-              _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-        } else if (Platform.isIOS) {
-          deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-        } else if (Platform.isLinux) {
-          deviceData = _readLinuxDeviceInfo(await deviceInfoPlugin.linuxInfo);
-        } else if (Platform.isMacOS) {
-          deviceData = _readMacOsDeviceInfo(await deviceInfoPlugin.macOsInfo);
-        } else if (Platform.isWindows) {
-          deviceData =
-              _readWindowsDeviceInfo(await deviceInfoPlugin.windowsInfo);
-        }
+      if (Platform.isAndroid) {
+        deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+        setState(() {
+          _deviceinfo = deviceData['androidId'];
+        });
+      } else if (Platform.isIOS) {
+        deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+        setState(() {
+          _deviceinfo = deviceData['identifierForVendor'];
+        });
       }
     } on PlatformException {
       deviceData = <String, dynamic>{
@@ -304,12 +288,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (!mounted) return;
-
-    setState(() {
-      _deviceData = deviceData;
-    });
-
-    print(deviceData.toString());
   }
 
   Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
@@ -358,65 +336,6 @@ class _LoginScreenState extends State<LoginScreen> {
       'utsname.release:': data.utsname.release,
       'utsname.version:': data.utsname.version,
       'utsname.machine:': data.utsname.machine,
-    };
-  }
-
-  Map<String, dynamic> _readLinuxDeviceInfo(LinuxDeviceInfo data) {
-    return <String, dynamic>{
-      'name': data.name,
-      'version': data.version,
-      'id': data.id,
-      'idLike': data.idLike,
-      'versionCodename': data.versionCodename,
-      'versionId': data.versionId,
-      'prettyName': data.prettyName,
-      'buildId': data.buildId,
-      'variant': data.variant,
-      'variantId': data.variantId,
-      'machineId': data.machineId,
-    };
-  }
-
-  Map<String, dynamic> _readWebBrowserInfo(WebBrowserInfo data) {
-    return <String, dynamic>{
-      'browserName': describeEnum(data.browserName),
-      'appCodeName': data.appCodeName,
-      'appName': data.appName,
-      'appVersion': data.appVersion,
-      'deviceMemory': data.deviceMemory,
-      'language': data.language,
-      'languages': data.languages,
-      'platform': data.platform,
-      'product': data.product,
-      'productSub': data.productSub,
-      'userAgent': data.userAgent,
-      'vendor': data.vendor,
-      'vendorSub': data.vendorSub,
-      'hardwareConcurrency': data.hardwareConcurrency,
-      'maxTouchPoints': data.maxTouchPoints,
-    };
-  }
-
-  Map<String, dynamic> _readMacOsDeviceInfo(MacOsDeviceInfo data) {
-    return <String, dynamic>{
-      'computerName': data.computerName,
-      'hostName': data.hostName,
-      'arch': data.arch,
-      'model': data.model,
-      'kernelVersion': data.kernelVersion,
-      'osRelease': data.osRelease,
-      'activeCPUs': data.activeCPUs,
-      'memorySize': data.memorySize,
-      'cpuFrequency': data.cpuFrequency,
-      'systemGUID': data.systemGUID,
-    };
-  }
-
-  Map<String, dynamic> _readWindowsDeviceInfo(WindowsDeviceInfo data) {
-    return <String, dynamic>{
-      'numberOfCores': data.numberOfCores,
-      'computerName': data.computerName,
-      'systemMemoryInMegabytes': data.systemMemoryInMegabytes,
     };
   }
 }

@@ -22,6 +22,8 @@ class AccueilAppState extends State<AccueilApp> {
   String nbrAbs = "00";
   String nbrRtd = "00";
 
+  String currentMonth = "";
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +37,38 @@ class AccueilAppState extends State<AccueilApp> {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
+  }
+
+  checkCurrentMonth() {
+    var mois = [
+      "JANVIER",
+      "FEVRIER",
+      "MARS",
+      "AVRIL",
+      "MAI",
+      "JUIN",
+      "JUILLET",
+      "AOUT",
+      "SEPTEMBRE",
+      "OCTOBRE",
+      "NOVEMBRE",
+      "DECEMBRE"
+    ];
+
+    DateTime today = new DateTime.now();
+
+    int tmp = 0;
+
+    mois.forEach((m) {
+      if (tmp == today.month) {
+        setState(() {
+          currentMonth = m + " " + today.year.toString();
+        });
+
+        return;
+      }
+      tmp = tmp + 1;
+    });
   }
 
   checkStats() async {
@@ -108,7 +142,6 @@ class AccueilAppState extends State<AccueilApp> {
                   data: "Systeme de Pointage des Apprenants",
                   size: 16,
                   color: Colors.white),
-              automaticallyImplyLeading: false,
               elevation: 1.0,
               actions: [
                 PopupMenuButton(
@@ -177,7 +210,7 @@ class AccueilAppState extends State<AccueilApp> {
                       top: (size.height * 0.1) + 320,
                       child: Column(children: [
                         TextWithStyle(
-                          data: "Statistique du mois de Avril 2022",
+                          data: "Statistique du mois de " + currentMonth,
                           size: 22,
                         ),
                         Row(
