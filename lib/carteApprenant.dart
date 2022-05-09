@@ -147,9 +147,9 @@ class CarteApprenantState extends State<CarteApprenant> {
                 child: Row(children: [
                   TextWithStyle(
                       data: "Numero de contact d'urgence: ",
-                      size: 16,
+                      size: 14,
                       weight: FontWeight.bold),
-                  TextWithStyle(data: app['numTuteur'], size: 16),
+                  TextWithStyle(data: app['numTuteur'], size: 14),
                 ]))
           ])),
     );

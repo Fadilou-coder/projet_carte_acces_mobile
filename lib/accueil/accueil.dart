@@ -115,14 +115,17 @@ class AccueilState extends State<Accueil> {
                               children: [
                                 TextWithStyle(
                                   data: "Orange ",
+                                  size: 16,
                                   color: OrangeColor,
                                 ),
                                 TextWithStyle(
                                   data: "Digital Center",
+                                  size: 16,
                                   color: Colors.black,
                                 ),
                                 TextWithStyle(
                                   data: " systeme pointage v1.0",
+                                  size: 16,
                                   color: OrangeColor,
                                 )
                               ],

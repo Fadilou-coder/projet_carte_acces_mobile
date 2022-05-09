@@ -1,4 +1,4 @@
-package com.example.projet_carte_acces
+package com.example.flutter_app
 
 import io.flutter.embedding.android.FlutterActivity
 
