@@ -131,13 +131,14 @@ class AccueilAppState extends State<AccueilApp> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    double wCarte = 390;
+    double wCarte = size.width * 0.9;
     double hCarte = 300;
     return (DefaultTabController(
         length: 2,
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.black,
+              automaticallyImplyLeading: false,
               title: TextWithStyle(
                   data: "Systeme de Pointage des Apprenants",
                   size: 16,
