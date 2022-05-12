@@ -60,30 +60,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Image.asset(
-              "assets/images/main.png",
-              width: size.width * 0.3,
-            ),
-          ),
-          Positioned(
-            top: -30,
-            left: -30,
-            child: Image.asset(
-              "assets/images/green_top.png",
-              width: size.width * 0.3,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Image.asset(
-              "assets/images/orange_bottom.png",
-              width: size.width * 0.2,
-            ),
-          ),
+          //   Positioned(
+          //     top: 0,
+          //     right: 0,
+          //     child: Image.asset(
+          //       "assets/images/main.png",
+          //       width: size.width * 0.3,
+          //     ),
+          //   ),
+          //   Positioned(
+          //     bottom: 0,
+          //     right: 0,
+          //     child: Image.asset(
+          //       "assets/images/orange_bottom.png",
+          //       width: size.width * 0.2,
+          //     ),
+          //   ),
           Align(
             alignment: Alignment.center,
             child: SingleChildScrollView(
@@ -169,8 +161,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     SizedBox(height: 30),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextWithStyle(data: "          "),
                         TextWithStyle(data: "ID: "),
                         TextWithStyle(
                             data: _deviceinfo, weight: FontWeight.bold)

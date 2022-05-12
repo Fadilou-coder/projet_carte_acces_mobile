@@ -1,12 +1,16 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:odc_pointage/avatar/Image.dart';
+import 'package:odc_pointage/avatar/controller.dart';
 import 'package:odc_pointage/text_with_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 class CarteApprenant extends StatefulWidget {
   const CarteApprenant({Key? key}) : super(key: key);
@@ -17,11 +21,18 @@ class CarteApprenant extends StatefulWidget {
 
 class CarteApprenantState extends State<CarteApprenant> {
   late SharedPreferences sharedPreferences;
+  final ProfileController profilerController = Get.put(ProfileController());
   var app = new Map<String, dynamic>();
+  var token = '';
+  var id = '';
   @override
   void initState() {
     super.initState();
     findApp();
+  }
+
+  Uint8List convertBase64Image(String base64String) {
+    return const Base64Decoder().convert(base64String.split(',').last);
   }
 
   Future<void> findApp() async {
@@ -42,6 +53,8 @@ class CarteApprenantState extends State<CarteApprenant> {
       user = json.decode(response.body);
       setState(() {
         app = user;
+        this.id = id;
+        this.token = token;
       });
     }
   }
@@ -129,10 +142,10 @@ class CarteApprenantState extends State<CarteApprenant> {
             Positioned(
               top: 95,
               right: 20,
-              child: Image.asset("assets/images/test.jpg", width: 80),
+              child: ImageApp(),
             ),
             Positioned(
-              top: 155,
+              top: 180,
               right: 15,
               child: BarcodeWidget(
                 barcode: Barcode.qrCode(),
