@@ -129,7 +129,7 @@ class CarteApprenantState extends State<CarteApprenant> {
             Positioned(
               top: 95,
               right: 20,
-              child: Image.asset("assets/images/test.jpg", width: 80, height: 80),
+              child: Image.asset("assets/images/test.jpg", width: 80, height: 80,),
             ),
             Positioned(
               top: 175,
