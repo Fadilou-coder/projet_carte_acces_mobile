@@ -16,6 +16,10 @@ class CarteApprenant extends StatefulWidget {
 }
 
 class CarteApprenantState extends State<CarteApprenant> {
+
+  // PickedFile? _imageFile;
+  // final ImagePicker _picker = ImagePicker();
+
   late SharedPreferences sharedPreferences;
   var app = new Map<String, dynamic>();
   @override
@@ -46,6 +50,77 @@ class CarteApprenantState extends State<CarteApprenant> {
     }
   }
 
+  //Widget imageProfile(){
+  //  return  Center(
+  //  child: Stack(children: <Widget>[
+  //     CircleAvatar(
+  //      radius: 40.0,
+  //   backgroundImage: _imageFile == null
+  //    ? AssetImage("assets/images/test.jpg")
+  //   : FileImage(File(_imageFile.toString())) as ImageProvider,
+  //  ),
+  //  Positioned(
+  //   child: InkWell(
+  //onTap: (){
+  //   showModalBottomSheet(context: context,
+  //     builder: ((builder) => bottomSheet()),
+  //    );
+  //   },
+  //  child: Icon(
+  //    Icons.camera_alt,
+  //     color: Colors.teal,
+  //      size: 20.0,
+  //     ),
+  // ),
+  // ),
+  //  ],
+  // )
+  //);
+//  }
+
+  //Widget bottomSheet() {
+  //return Container(
+  //height: 40.0,
+  //width: MediaQuery.of(context).size.width,
+  //ctai Column
+  //child: Row(
+  //children: <Widget>[
+  //Text(
+  //"Choose Profile photo",
+  //style: TextStyle(
+  // fontSize: 20.0,
+  // ),
+  //),
+  //Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+  //TextButton.icon(
+  //icon: Icon(Icons.camera),
+  //onPressed: () {
+  //takePhoto(ImageSource.camera);
+  //},
+  //label: Text("Camera"),
+  //),
+  //TextButton.icon(
+  //icon: Icon(Icons.image),
+  //onPressed: () {
+  //takePhoto(ImageSource.gallery);
+  //},
+  // label: Text("Gallery"),
+  // ),
+  // ])
+  // ],
+  // ),
+  // );
+  // }
+
+  //void takePhoto(ImageSource source) async {
+  //final pickedFile = await _picker.pickImage(
+  //  source: source,
+  //);
+  // setState(() {
+  //_imageFile = pickedFile! as PickedFile;
+  //});
+  // }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -67,6 +142,7 @@ class CarteApprenantState extends State<CarteApprenant> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          //imageProfile(),
                           Image.asset("assets/images/logo_odc.png", width: 150),
                           Image.asset("assets/images/Logo-Sonatel-Academy.png",
                               width: 120),
