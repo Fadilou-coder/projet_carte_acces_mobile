@@ -182,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
     content: Text("Remplissez tous les champs..."),
   );
   static const snackBar1 = SnackBar(
-    content: Text("Invalid Credentials"),
+    content: Text("Email ou mot de passe incorrect"),
   );
 
   //CREATE FUNCTION TO CALL POST API
@@ -204,6 +204,12 @@ class _LoginScreenState extends State<LoginScreen> {
           'password': passwordController.text
         }),
       );
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: TextWithStyle(
+            data: response.statusCode.toString() + " / " + response.body,
+            color: OrangeColor),
+      ));
 
       if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
