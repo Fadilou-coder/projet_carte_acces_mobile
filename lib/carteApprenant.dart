@@ -273,7 +273,8 @@ class CarteApprenantState extends State<CarteApprenant> {
               child: BarcodeWidget(
                 barcode: Barcode.qrCode(),
                 color: Colors.black,
-                data: app['code'],
+                data:
+                    'https://pointage-odc.vercel.app/apprenant/' + app['code'],
                 width: 90,
                 height: 60,
               ),

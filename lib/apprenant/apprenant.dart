@@ -88,7 +88,7 @@ class ApprenantState extends State<Apprenant> {
           style: SweetAlertStyle.loading,
         );
         if (action == "entree") {
-          if ((await entree(qrCode)) == true) {
+          if ((await entree(qrCode.substring(42))) == true) {
             setState(() {
               duration = 1;
             });
@@ -106,7 +106,7 @@ class ApprenantState extends State<Apprenant> {
             });
           }
         } else if (action == "sortie") {
-          if ((await sortie(qrCode)) == true) {
+          if ((await sortie(qrCode.substring(42))) == true) {
             setState(() {
               duration = 1;
             });

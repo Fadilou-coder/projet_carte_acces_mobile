@@ -192,73 +192,75 @@ class AccueilAppState extends State<AccueilApp> {
                     }),
               ],
             ),
-            body: SizedBox(
-                width: size.width,
-                height: size.height,
-                child: Stack(alignment: Alignment.center, children: <Widget>[
-                  Positioned(
-                      top: 10,
-                      child: TextWithStyle(
-                          data: "Ma Carte d'Access",
-                          size: 22,
-                          weight: FontWeight.bold)),
-                  Positioned(
-                      top: size.height * 0.1,
-                      width: wCarte,
-                      height: hCarte,
-                      child: CarteApprenant()),
-                  Positioned(
-                      top: (size.height * 0.1) + 320,
-                      child: Column(children: [
-                        TextWithStyle(
-                          data: "Statistique du mois de " + currentMonth,
-                          size: 22,
-                        ),
-                        Row(
-                          children: [
+            body: SingleChildScrollView(
+                child: SizedBox(
+                    width: size.width,
+                    height: size.height,
+                    child:
+                        Stack(alignment: Alignment.center, children: <Widget>[
+                      Positioned(
+                          top: 10,
+                          child: TextWithStyle(
+                              data: "Ma Carte d'Access",
+                              size: 22,
+                              weight: FontWeight.bold)),
+                      Positioned(
+                          top: size.height * 0.1,
+                          width: wCarte,
+                          height: hCarte,
+                          child: CarteApprenant()),
+                      Positioned(
+                          top: (size.height * 0.1) + 320,
+                          child: Column(children: [
                             TextWithStyle(
-                                data: "Nombre de minutes Retard: ",
+                              data: "Statistique du mois de " + currentMonth,
+                              size: 22,
+                            ),
+                            Row(
+                              children: [
+                                TextWithStyle(
+                                    data: "Nombre de minutes Retard: ",
+                                    size: 22,
+                                    weight: FontWeight.bold),
+                                TextWithStyle(
+                                  data: nbrRtd,
+                                  size: 22,
+                                  color: OrangeColor,
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                TextWithStyle(
+                                    data: "Nombre d'Absence: ",
+                                    size: 22,
+                                    weight: FontWeight.bold),
+                                TextWithStyle(
+                                  data: nbrAbs,
+                                  size: 22,
+                                  color: OrangeColor,
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            TextWithStyle(
+                                data: "Attention!!!",
+                                size: 22,
+                                color: Colors.red,
+                                weight: FontWeight.bold),
+                            TextWithStyle(
+                              data: "Vous serez sanctionné si vous dépassez :",
+                              size: 17,
+                            ),
+                            TextWithStyle(
+                                data: "- 60 minutes de retard,",
                                 size: 22,
                                 weight: FontWeight.bold),
                             TextWithStyle(
-                              data: nbrRtd,
-                              size: 22,
-                              color: OrangeColor,
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            TextWithStyle(
-                                data: "Nombre d'Absence: ",
+                                data: "- 3 abscences",
                                 size: 22,
                                 weight: FontWeight.bold),
-                            TextWithStyle(
-                              data: nbrAbs,
-                              size: 22,
-                              color: OrangeColor,
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 5),
-                        TextWithStyle(
-                            data: "Attention!!!",
-                            size: 22,
-                            color: Colors.red,
-                            weight: FontWeight.bold),
-                        TextWithStyle(
-                          data: "Vous serez sanctionné si vous dépassez :",
-                          size: 19,
-                        ),
-                        TextWithStyle(
-                            data: "- 60 minutes de retard,",
-                            size: 22,
-                            weight: FontWeight.bold),
-                        TextWithStyle(
-                            data: "- 3 abscences",
-                            size: 22,
-                            weight: FontWeight.bold),
-                      ]))
-                ])))));
+                          ]))
+                    ]))))));
   }
 }
